@@ -12,7 +12,7 @@ class WrongAnimal{
 		WrongAnimal(std::string);
 		WrongAnimal(const WrongAnimal &);
 		WrongAnimal &operator=(const WrongAnimal &);
-		virtual ~WrongAnimal();
+		~WrongAnimal();
 		std::string getType() const;
 		void setType(std::string);
 		void makeSound() const;
