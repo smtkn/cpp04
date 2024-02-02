@@ -1,35 +1,47 @@
 #include "Cat.hpp"
 
-Cat::Cat() {
-	Animal::type = "Cat";
-	std::cout << "Cat constructor called" << std::endl;
-	this->brain = new Brain();
+Cat::Cat() : AAnimal("Cat")
+{
+    brain = new Brain();
+    std::cout << "[CAT] Cat default constructor called" << std::endl;
 }
 
-Cat::~Cat() {
-	delete brain;
-    std::cout << "Cat destructor called" << std::endl;
+Cat::Cat(const Cat &copy) : AAnimal(copy)
+{
+    std::cout << "[CAT] Cat copy constructor called" << std::endl;
+    _type = copy._type;
+    brain = new Brain();
+    for (int i = 0; i < 100; i++)
+        brain->setIdeas(i, copy.brain->getIdeas(i));
 }
 
-void Cat::makeSound() const {
-	std::cout << "meawwww" << std::endl;
+Cat::~Cat()
+{
+    std::cout << "[CAT] Cat destructor called" << std::endl;
+    delete brain;
 }
 
-Cat::Cat(const Cat &copy) {
-    this->brain = new Brain(*copy.brain); // Derin kopya
-    this->type = copy.type;
-    std::cout << "Cat copy constructor called" << std::endl;
-}
-
-Cat &Cat::operator=(const Cat &copy) {
-    if (this != &copy) {
-        delete this->brain; // Eski brain'i sil
-        *this->brain = *copy.brain; // Yeni brain oluştur
-        this->type = copy.type;
+Cat &Cat::operator=(const Cat &copy)
+{
+    AAnimal::operator=(copy);
+    std::cout << "[CAT] Cat assignation operator called" << std::endl;
+    if (this != &copy)
+    {
+        if (brain)
+            delete brain;
+        brain = new Brain();
+        for (int i = 0; i < 100; i++)
+            brain->setIdeas(i, copy.brain->getIdeas(i));
     }
-    return *this;
+    return (*this);
 }
 
-Brain *Cat::getBrain() const {
-	return brain;
+void Cat::makeSound() const
+{
+    std::cout << "[CAT] meow" << std::endl;
+}
+
+Brain* Cat::getBrain() const
+{
+    return (brain);
 }

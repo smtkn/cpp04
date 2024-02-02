@@ -1,80 +1,104 @@
-#include "Character.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Character.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: oolkay <oolkay@42.tr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/05 12:57:12 by diogmart          #+#    #+#             */
+/*   Updated: 2024/01/27 14:23:55 by oolkay           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-Character::Character(std::string name) : name(name) {
-    std::cout << "Character " << name << " created" << std::endl;
-    for (int i = 0; i < 4; i++) {
-        this->inventory[i] = 0;
-    }
+# include "Character.hpp"
+
+Character::Character() : _name("Default"){
+	for (int i = 0; i < INVENTORY_SIZE; i++)
+		this->_inventory[i] = NULL;
+
+	for (int i = 0; i < FLOOR_SIZE; i++)
+		this->_floor[i] = NULL;
 }
 
-Character::Character(const Character& copy) {
-    *this = copy;
+Character::Character(std::string name) : _name(name) {
+	for (int i = 0; i < INVENTORY_SIZE; i++)
+		this->_inventory[i] = NULL;
+
+	for (int i = 0; i < FLOOR_SIZE; i++)
+		this->_floor[i] = NULL;
 }
 
-Character &Character::operator=(const Character& copy) {
-    this->name = copy.getName();
-    for (int i = 0; i < 4; i++) {
-        if (copy.inventory[i] == 0)
-            this->inventory[i] = 0;
-        else
-            this->inventory[i] = copy.inventory[i]->clone();
-    }
-    return *this;
+Character::Character(const Character& original) {
+	this->_name = original._name;
+	for (int i = 0; i < INVENTORY_SIZE; i++) {
+		if (this->_inventory[i])
+			delete this->_inventory[i];
+		this->_inventory[i] = original._inventory[i];
+	}
+	for (int i = 0; i < FLOOR_SIZE; i++) {
+		if (this->_floor[i])
+			delete this->_floor[i];
+		this->_floor[i] = original._floor[i];
+	}
 }
 
 Character::~Character() {
-    for (int i = 0; i < 4; i++) {
-        if (this->inventory[i])
-            delete this->inventory[i];
-    }
-    std::cout << "Character " << name << " destructed" << std::endl;
+	for (int i = 0; i < INVENTORY_SIZE; i++) {
+		if (this->_inventory[i])
+			delete this->_inventory[i];
+	}
+	for (int i = 0; i < FLOOR_SIZE; i++) {
+		if (this->_floor[i])
+			delete this->_floor[i];
+	}
+	std::cout << this->_name << " died!" << std::endl;
 }
 
-std::string const &Character::getName() const {
-    return (this->name);
+Character& Character::operator=(const Character& original) {
+	if (this != &original) {
+        this->_name = original._name;
+		for (int i = 0; i < INVENTORY_SIZE; i++) {
+			if (this->_inventory[i])
+				delete this->_inventory[i];
+			this->_inventory[i] = original._inventory[i];
+		}
+		for (int i = 0; i < FLOOR_SIZE; i++) {
+			if (this->_floor[i])
+				delete this->_floor[i];
+			this->_floor[i] = original._floor[i];
+		}
+    }
+	return (*this);
 }
-void Character::equip(AMateria *m) {
-	int i = 0;
-	if(!m){
-		std::cout << "Sorry meteria is empty" << std::endl;
-		return;
-	}
-	while(i < 4)
-	{
-		if(inventory[i] == 0){
-			this->inventory[i] = m;
-    		std::cout << this->getName() << " equip the " << m->getType() << " at slot " << i << std::endl;
+
+std::string const & Character::getName() const {
+	return this->_name;
+}
+
+void Character::equip(AMateria* m) {
+	for (int i = 0; i < INVENTORY_SIZE; i++) {
+		if (this->_inventory[i] == NULL) {
+			this->_inventory[i] = m;
 			return;
 		}
-		i++;
 	}
-	std::cout << "Sorry equip slot full" << std::endl;
+	std::cout << "Character doesn't have space in inventory!" << std::endl;
 }
 
 void Character::unequip(int idx) {
-	if(idx > 3)
-		std::cout << "Idx is too big" << std::endl;
-	else if(idx < 0)
-		std::cout << "Idx is too small" << std::endl;
-	else{
-		if(inventory[idx] == 0)
-			std::cout << "There is no Materia" << std::endl;
-		else{
-			inventory[idx] = 0;
-			std::cout << this->getName() << " unequip the " << this->inventory[idx]->getType() << " at slot " << idx << std::endl;
+	if (idx < 0 || idx >= INVENTORY_SIZE) {
+		std::cout << "Invalid index!" << std::endl;
+		return;
+	}
+	for (int i = 0; i < FLOOR_SIZE; i++) {
+		if (this->_floor[i] == NULL) {
+			this->_floor[i] = this->_inventory[idx];
+			this->_inventory[idx] = NULL;
 		}
 	}
 }
 
 void Character::use(int idx, ICharacter& target) {
-	if(idx > 3)
-		std::cout << "Idx is too big" << std::endl;
-	else if(idx < 0)
-		std::cout << "Idx is too small" << std::endl;
-	else{
-		if(inventory[idx] == 0)
-			std::cout << "There is no Materia" << std::endl;
-		else
-			inventory[idx]->use(target);
-	}
+	if (this->_inventory[idx])
+		this->_inventory[idx]->use(target);
 }

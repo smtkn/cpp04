@@ -1,30 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   AMateria.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: diogmart <diogmart@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/05 12:53:16 by diogmart          #+#    #+#             */
+/*   Updated: 2023/09/25 12:48:54 by diogmart         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "AMateria.hpp"
 
-AMateria::AMateria(){
-    std::cout << "AMateria constructor called" << std::endl;
+AMateria::AMateria() {
+	this->type = "default";
 }
 
-AMateria::AMateria(std::string const & type): type(type){
-    std::cout << "AMateria constructor called " << type << " created" << std::endl;
+AMateria::AMateria(std::string const & type) {
+	this->type = type;
 }
 
-AMateria::~AMateria(){
-    std::cout << "AMateria destructor called" << std::endl;
+AMateria::AMateria(const AMateria& original) {
+	this->type = original.type;
 }
 
-AMateria::AMateria(const AMateria &copy): type(copy.getType()){
-    std::cout << "AMateria copy constructor called" << std::endl;
+AMateria::~AMateria() {}
+
+AMateria& AMateria::operator=(const AMateria& original) {
+	this->type = original.type;
+    return (*this);
 }
 
 std::string const & AMateria::getType() const {
-    return (this->type);
-}
-
-AMateria &AMateria::operator=(const AMateria& copy) {
-    (void)copy;
-    return *this;
+	return this->type;
 }
 
 void AMateria::use(ICharacter& target) {
-	std::cout << "AMateria used on " << target.getName() << std::endl;
+	(void)target;
 }

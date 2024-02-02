@@ -1,54 +1,64 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   MateriaSource.cpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: oolkay <oolkay@42.tr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/05 15:17:23 by diogmart          #+#    #+#             */
+/*   Updated: 2024/01/27 14:21:32 by oolkay           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "MateriaSource.hpp"
-#include "AMateria.hpp"
 
 MateriaSource::MateriaSource() {
-    std::cout << "MateriaSource constructer called" << std::endl;
-    for (int i = 0; i < 4; i++) {
-        this->inventory[i] = 0;
-    }
+    for (int i = 0; i < MAX_MATERIAS; i++)
+		this->materias[i] = NULL;
 }
-
-MateriaSource::MateriaSource(const MateriaSource& copy) {
-    *this = copy;
+    
+MateriaSource::MateriaSource(const MateriaSource& original) {
+    for (int i = 0; i < MAX_MATERIAS; i++)
+		this->materias[i] = original.materias[i]->clone();
 }
-
-MateriaSource &MateriaSource::operator=(const MateriaSource& copy) {
-    for (int i = 0; i < 4; i++) {
-        this->inventory[i] = copy.inventory[i];
-    }
-    return *this;
-}
-
+    
 MateriaSource::~MateriaSource() {
-    for (int i = 0; i < 4; i++) {
-        if (this->inventory[i])
-            delete this->inventory[i];
+    for (int i = 0; i < MAX_MATERIAS; i++) {
+		if (this->materias[i])
+			delete this->materias[i];
+	}
+}
+    
+MateriaSource& MateriaSource::operator=(const MateriaSource& original) {
+    if (this != &original) {
+		for (int i = 0; i < MAX_MATERIAS; i++) {
+			if (this->materias[i])
+				delete this->materias[i];
+			this->materias[i] = original.materias[i]->clone();
+		}
     }
-    std::cout << "MateriaSource destructed" <<std::endl;
+    return (*this);
 }
-
-void MateriaSource::learnMateria(AMateria* m) {
-    int i = 0;
-	if(!m){
-		std::cout << "Sorry meteria is empty" << std::endl;
-		return;
+    
+void MateriaSource::learnMateria(AMateria* materia) {
+	for (int i = 0; i < MAX_MATERIAS; i++) {
+		if (this->materias[i] == NULL) {
+			this->materias[i] = materia;
+			std::cout << "Materia learned!" << std::endl;
+			return ;
+		}
 	}
-	while(i < 4)
-	{
-		if(inventory[i] == 0)
-        {
-			this->inventory[i] = m;
-            return;
-        }
-		i++;
-	}
-	std::cout << "Sorry equip slot full" << std::endl;
+	std::cout << "MateriaSource is full!" << std::endl;
 }
-
+    
 AMateria* MateriaSource::createMateria(std::string const & type) {
-    for (int i = 0; i < 4; i++) {
-        if (this->inventory[i]->getType() == type)
-            return this->inventory[i]->clone();
-    }
-    return NULL;
+	for (int i = 0; i < MAX_MATERIAS; i++) {
+		if (this->materias[i] && (this->materias[i]->getType() == type)) {
+			std::cout << "Materia created!" << std::endl;
+			return (this->materias[i]->clone());
+		}
+	}
+	std::cout << "Materia not found!" << std::endl;
+	return (NULL);
 }
+    

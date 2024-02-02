@@ -1,15 +1,21 @@
 #ifndef BRAIN_HPP
-#define BRAIN_HPP
+# define BRAIN_HPP
 
-#include <string>
+# include <iostream>
 
-class Brain{
+class Brain
+{
     public:
-        std::string ideas[100];
         Brain();
-        Brain(const Brain &c);
-        Brain &operator=(const Brain &);
-        virtual ~Brain();
+        Brain(const Brain &other);
+        ~Brain();
+        Brain &operator=(const Brain &other);
+
+        std::string getIdeas(int index) const;
+        void setIdeas(int index, std::string idea);
+
+    private:
+        std::string ideas[100];
 };
 
 #endif

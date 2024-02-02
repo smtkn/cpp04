@@ -1,25 +1,38 @@
 #include "Brain.hpp"
-#include <iostream>
 
-Brain::Brain() {
-    for(int i = 0; i < 100; i++){
-        ideas[i] = "God Is Dead, and We Have Killed Him.";
+Brain::Brain()
+{
+    std::cout << "[Brain] constructor called" << std::endl;
+}
+
+Brain::Brain(const Brain &other)
+{
+    std::cout << "[Brain] copy constructor called" << std::endl;
+    *this = other;
+}
+
+Brain::~Brain()
+{
+    std::cout << "[Brain] destructor called" << std::endl;
+}
+
+Brain &Brain::operator=(const Brain &other)
+{
+    std::cout << "[Brain] assignation operator called" << std::endl;
+    if (this != &other)
+    {
+        for (int i = 0; i < 100; i++)
+            this->ideas[i] = other.ideas[i];
     }
-    std::cout << "Default Brain constructor called" << std::endl;
+    return (*this);
 }
 
-Brain::~Brain() {
-    std::cout << "Default Brain destructor called" << std::endl;
+std::string Brain::getIdeas(int index) const
+{
+    return (this->ideas[index]);
 }
 
-Brain::Brain(const Brain &copy) {
-    std::cout << "Copy Brain constructor called" << std::endl;
-    *this = copy;
+void Brain::setIdeas(int index, std::string idea)
+{
+    this->ideas[index] = idea;
 }
-
-Brain &Brain::operator=(const Brain &copy) {
-    for (size_t i = 0; i < copy.ideas->size(); i++)
-        ideas[i] = copy.ideas[i];
-    return(*this);
-}
-

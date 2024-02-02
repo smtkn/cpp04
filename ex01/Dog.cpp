@@ -1,35 +1,48 @@
 #include "Dog.hpp"
 
-Dog::Dog(){
-	Animal::type = "Dog";
-	std::cout << "Dog constructor called" << std::endl;
-	this->brain = new Brain();
+Dog::Dog() : Animal("Dog")
+{
+    brain = new Brain();
+    std::cout << "[DOG] Dog default constructor called" << std::endl;
 }
 
-Dog::~Dog() {
-    delete brain;
-    std::cout << "Dog destructor called" << std::endl;
+Dog::Dog(const Dog &copy): Animal(copy)
+{
+    std::cout << "[DOG] Dog copy constructor called" << std::endl;
+    _type = copy._type;
+    brain = new Brain();
+    for (int i = 0; i < 100; i++)
+        brain->setIdeas(i, copy.brain->getIdeas(i));
 }
 
-void Dog::makeSound() const{
-	std::cout << "woff woff" << std::endl;
+Dog::~Dog()
+{
+    if (brain)
+        delete brain;
+    std::cout << "[DOG] Dog destructor called" << std::endl;
 }
 
-Dog::Dog(const Dog &copy) {
-    this->brain = new Brain(*copy.brain); // Derin kopya
-    this->type = copy.type;
-    std::cout << "Dog copy constructor called" << std::endl;
-}
-
-Dog &Dog::operator=(const Dog &copy) {
-    if (this != &copy) {
-        delete this->brain; // Eski brain'i sil
-        this->brain = new Brain(*copy.brain); // Yeni brain oluştur
-        this->type = copy.type;
+Dog &Dog::operator=(const Dog &copy)
+{
+    Animal::operator=(copy);
+    std::cout << "[DOG] Dog assignation operator called" << std::endl;
+    if (this != &copy)
+    {
+        if (brain)
+            delete brain;
+        brain = new Brain();
+        for (int i = 0; i < 100; i++)
+            brain->setIdeas(i, copy.brain->getIdeas(i));
     }
-    return *this;
+    return (*this);
 }
 
-Brain *Dog::getBrain() const{
-	return brain;
+void Dog::makeSound() const
+{
+    std::cout << "[DOG] woof" << std::endl;
+}
+
+Brain* Dog::getBrain() const
+{
+    return (brain);
 }
